@@ -1,0 +1,11 @@
+#!/usr/bin/env escript
+%%! -name ejabberd@<%= @node[:fqdn] %> -setcookie <%= node[:ejabberd_erlang_cookie] %> -home /var/lib/ejabberd -pa /usr/lib/ejabberd/ebin -s ejabberd -kernel inetrc "/etc/ejabberd/inetrc" -ejabberd config "/etc/ejabberd/ejabberd.cfg" log_path "/var/log/ejabberd/ejabberd.log" erlang_log_path "/var/log/ejabberd/erlang.log" -sasl sasl_error_logger false -mnesia dir "/var/lib/ejabberd" -smp disable
+
+main([Host]) ->
+    application:stop(ejabberd),
+    mnesia:stop(),
+    mnesia:delete_schema([node()]),
+    mnesia:start(),
+    mnesia:change_config(extra_db_nodes,[list_to_atom(Host)]),
+    mnesia:change_table_copy_type(schema,node(),disc_copies),
+    mnesia:info().
