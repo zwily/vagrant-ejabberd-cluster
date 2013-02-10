@@ -8,26 +8,26 @@ will start two ubuntu nodes, with ejabberd clustered. You're welcome.
 
 1. Install [vagrant](http://vagrantup.com/)
 
-    gem install vagrant
+        gem install vagrant
 
 2. Download and install [VirtualBox](http://www.virtualbox.org/)
 3. Install [vagrant-hostmaster](https://github.com/mosaicxm/vagrant-hostmaster)
  
-    vagrant gem install vagrant-hostmaster
+        vagrant gem install vagrant-hostmaster
 
 4. Clone this repo
 5. (Optional) Tweak the settings in the Vagrantfile. There are ip
    addresses and domain names and stuff.
 5. Run it!
 
-    cd [repo]
-    vagrant up
+        cd [repo]
+        vagrant up
 
 Once that's done, you will have two ejabberd nodes running in a cluster
 Go to http://chat1.example.com:5280/admin/nodes/ to verify.
-(default credentials: admin@example.com/password)
+(default credentials: `admin@example.com`/`password`)
 
 # Thanks
 
-The initial chef recipe comes from
-https://github.com/cookbooks/ejabberd
+The initial chef recipe for ejabberd comes from
+https://github.com/cookbooks/ejabberd, but was heavily modified.
