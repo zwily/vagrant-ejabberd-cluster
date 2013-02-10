@@ -29,5 +29,8 @@ Go to http://chat1.example.com:5280/admin/nodes/ to verify.
 
 # Thanks
 
-The initial chef recipe for ejabberd comes from
+* The initial chef recipe for ejabberd comes from
 https://github.com/cookbooks/ejabberd, but was heavily modified.
+* This StackOverflow answer was invaluable in getting this going:
+http://stackoverflow.com/questions/5156443/ejabberd-clustering/9101761#9101761
+
