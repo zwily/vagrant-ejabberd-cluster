@@ -2,7 +2,14 @@
 
 Installing ejabberd in a clustered fashion is kind of a pain. Created
 through many hours of googling and trial-and-error, this Vagrant project
-will start two ubuntu nodes, with ejabberd clustered. You're welcome.
+will:
+* Start two Ubuntu nodes.
+* Install ejabberd.
+* Set up clustering between them, programmatically. If you've wrestled
+  with this before you'll understand why that's significant.
+* Adds an admin user.
+
+Yeah I know... you're welcome.
 
 # How
 
