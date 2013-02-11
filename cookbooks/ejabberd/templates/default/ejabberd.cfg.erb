@@ -139,7 +139,7 @@
 % (note that if you remove mod_register from modules list then users will not
 % be able to change their password as well as register).
 % This setting is default because it's more safe.
-{access, register, [{deny, all}]}.
+{access, register, [{allow, all}]}.
 
 %% Everybody can create pubsub nodes
 {access, pubsub_createnode, [{allow, all}]}.
@@ -162,6 +162,19 @@
   %%{mod_echo,   [{host, "echo.localhost"}]},
   {mod_irc,      []},
   {mod_last,     []},
+  {mod_logxml, [
+    {stanza, [message]},
+    {direction, [external]},
+    {orientation, [send]},
+    {logdir, "/var/log/ejabberd/"},
+    {timezone, universal},
+    {rotate_days, 1},
+    {rotate_megs, 100},
+    {rotate_kpackets, no},
+    {check_rotate_kpackets, 1},
+    {use_tmpfile, true},
+    {rotate_seconds, 10}
+    ]},
   {mod_muc,      [
 		  %%{host, "conference.@HOST@"},
 		  {access, muc},

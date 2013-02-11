@@ -27,6 +27,11 @@ service "ejabberd" do
   not_if { File.exist?("/var/lib/ejabberd/.configured") }
 end
 
+cookbook_file "/usr/lib/ejabberd/ebin/mod_logxml.beam" do
+  source "mod_logxml.beam"
+  mode "644"
+end
+
 # yeah this recipe is super dangerous, but we need to clear
 # out the data created when the service started without
 # all the config we need.
