@@ -1,0 +1,5 @@
+#!/usr/bin/env escript
+%%! -name ejabberdscript@<%= @node[:fqdn] %> -setcookie <%= node[:ejabberd_erlang_cookie] %> -home /var/lib/ejabberd -pa /usr/lib/ejabberd/ebin -kernel inetrc "/etc/ejabberd/inetrc" -ejabberd config "/etc/ejabberd/ejabberd.cfg" log_path "/var/log/ejabberd/ejabberd.log" erlang_log_path "/var/log/ejabberd/erlang.log" -sasl sasl_error_logger false -mnesia dir "/var/lib/ejabberd" -smp disable
+
+main(_) ->
+    mnesia:info().

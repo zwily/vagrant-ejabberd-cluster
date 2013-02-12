@@ -1,3 +1,10 @@
+package "ejabberd" do
+  # This version of ejabberd does not start on installation.
+  # When ejabberd starts, it writes things to local storage
+  # that make it hard to change its domain name later.
+  version "2.1.11-1insops~precise2"
+end
+
 directory "/var/lib/ejabberd" do
   owner "ejabberd"
   group "ejabberd"
@@ -11,33 +18,9 @@ file "/var/lib/ejabberd/.erlang.cookie" do
   mode "600"
 end
 
-package "ejabberd"
-
 service "ejabberd" do
   start_command "/etc/init.d/ejabberd start"
   stop_command "/etc/init.d/ejabberd stop"
-end
-
-execute "wait for ejabberd to start, so we can stop it" do
-  command "until ejabberdctl status; do sleep 1; done"
-end
-
-service "ejabberd" do
-  action :stop
-  not_if { File.exist?("/var/lib/ejabberd/.configured") }
-end
-
-cookbook_file "/usr/lib/ejabberd/ebin/mod_logxml.beam" do
-  source "mod_logxml.beam"
-  mode "644"
-end
-
-# yeah this recipe is super dangerous, but we need to clear
-# out the data created when the service started without
-# all the config we need.
-execute "clean ejabberd dir" do
-  command "rm /var/lib/ejabberd/[!.]*"
-  not_if { File.exist?("/var/lib/ejabberd/.configured") }
 end
 
 template "/etc/default/ejabberd" do
@@ -54,44 +37,60 @@ template "/etc/ejabberd/ejabberd.cfg" do
 end
 
 if node[:ejabberd_replicate_from]
+  template "/usr/sbin/ejabberd_mnesia_info.erl" do
+    source "ejabberd_mnesia_info.erl.erb"
+    mode "700"
+    owner "ejabberd"
+    group "ejabberd"
+  end
 
-  template "/tmp/ejabberd_add_to_cluster.erl" do
+  template "/usr/sbin/ejabberd_add_to_cluster.erl" do
     source "ejabberd_add_to_cluster.erl.erb"
     mode "700"
     owner "ejabberd"
     group "ejabberd"
-    not_if { File.exist?("/var/lib/ejabberd/.configured") }
   end
 
+  # TODO: only run this when ejabberd is stopped
   execute "add to cluster" do
     group "ejabberd"
     user "ejabberd"
-    command "/tmp/ejabberd_add_to_cluster.erl #{node[:ejabberd_replicate_from]}"
-    not_if { File.exist?("/var/lib/ejabberd/.configured") }
+    command "/usr/sbin/ejabberd_add_to_cluster.erl #{node[:ejabberd_replicate_from]}"
+    # attempt to only run this if running db nodes only has 1 item
+    only_if do
+      !File.exist?("/var/lib/ejabberd/.configured")
+      # TODO: make this work, being smarter about checking if the db is already clustered
+      #str = `/usr/sbin/ejabberd_mnesia_info.erl | grep "running db nodes"`.chomp
+      #puts "str: #{str}"
+      #str =~ /\[(.*)\]/
+      #nodes = $1.split(',')
+      #nodes.length == 1
+    end
   end
 
+  file "/var/lib/ejabberd/.configured" do
+    content "done"
+  end
 end
 
 # for some reason, chef seems to think that ejabberd is already running here
 execute "start ejabberd" do
   command "/etc/init.d/ejabberd start"
-  not_if { File.exist?("/var/lib/ejabberd/.configured") }
-end
-
-# this is our marker that says the initial round of setup is done. (ick)
-file "/var/lib/ejabberd/.configured" do
-  content "done"
+  not_if "ejabberdctl status"
 end
 
 execute "wait for ejabberd to start" do
   command "until ejabberdctl status; do sleep 1; done"
+  timeout 30
 end
 
 if !node[:ejabberd_replicate_from]
-
   # only run this on the main node
   execute "add ejabberd admin user" do
     command "/usr/sbin/ejabberdctl register admin #{node[:jabber_domain]} #{node[:jabber_admin_password]}"
+    only_if do
+      `ejabberdctl registered_users #{node[:jabber_domain]} | grep admin | wc -l`.chomp.to_i == 0
+    end
   end
-
 end
+
