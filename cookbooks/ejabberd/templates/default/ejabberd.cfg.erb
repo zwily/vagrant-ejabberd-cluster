@@ -141,6 +141,8 @@
 % This setting is default because it's more safe.
 {access, register, [{allow, all}]}.
 
+{registration_timeout, infinity}.
+
 %% Everybody can create pubsub nodes
 {access, pubsub_createnode, [{allow, all}]}.
 
@@ -181,7 +183,13 @@
 		  {access_create, muc},
 		  {access_persistent, muc},
 		  {access_admin, muc_admin},
-		  {max_users, 500}
+		  {max_users, 500},
+                  {default_room_options, [
+                          {members_only, true},
+                          {persistent, true},
+                          {public, false},
+                          {public_list, false}
+                  ]}
 		 ]},
   %%{mod_muc_log,[]},
   {mod_offline,  []},
@@ -201,7 +209,11 @@
   {mod_stats,    []},
   {mod_time,     []},
   {mod_vcard,    []},
-  {mod_version,  []}
+  {mod_version,  []},
+  {mod_register, [
+    %% Allows anyone to register.
+    {access_from, register}
+  ]}
  ]}.
 
 %%% Local Variables:
