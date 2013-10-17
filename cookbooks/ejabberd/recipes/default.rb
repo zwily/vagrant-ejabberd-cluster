@@ -2,7 +2,7 @@ package "ejabberd" do
   # This version of ejabberd does not start on installation.
   # When ejabberd starts, it writes things to local storage
   # that make it hard to change its domain name later.
-  version "2.1.11-1insops~precise2"
+  version "2.1.12-1insops~precise3"
 end
 
 directory "/var/lib/ejabberd" do
