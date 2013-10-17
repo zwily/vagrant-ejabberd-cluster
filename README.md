@@ -18,21 +18,21 @@ Yeah I know... you're welcome.
         gem install vagrant
 
 2. Download and install [VirtualBox](http://www.virtualbox.org/)
-3. Install [vagrant-hostmaster](https://github.com/mosaicxm/vagrant-hostmaster)
- 
-        vagrant gem install vagrant-hostmaster
+3. Install [vagrant-hostmanager](https://github.com/smdahlen/vagrant-hostmanager)
+
+        vagrant plugin install vagrant-hostmanager
 
 4. Clone this repo
 5. (Optional) Tweak the settings in the Vagrantfile. There are ip
    addresses and domain names and stuff.
 5. Run it!
 
-        cd [repo]
+        cd [this-repo]
         vagrant up
 
 Once that's done, you will have two ejabberd nodes running in a cluster
-Go to http://chat1.example.com:5280/admin/nodes/ to verify.
-(default credentials: `admin@example.com`/`password`)
+Go to http://chat1.example.com:5280/admin/nodes/ to verify (default credentials:
+`admin@example.com`/`password`)
 
 # Thanks
 
